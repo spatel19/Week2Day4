@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>Horizons AJAX Async Example</title>
+  </head>
+
+  <body>
+
+    <h1>AJAX Async Example</h1>
+
+    <p>Use <a href="http://api.jquery.com/jquery.ajax/">$.ajax()</a> to fetch <a href="https://horizons-json-cors.s3.amazonaws.com/products.json">these products</a> in JavaScript on this page. Display their names and prices below as a bulleted list.</p>
+    <p>
+      The link above will respond with an array of urls. You need to asynchronously make AJAX requests to these links, and then sort the results in increasing price order (lowest price up top).
+    </p>
+
+    <div id="products">REPLACE me with the sorted list of products! My <code>id is "products"</code>.</div>
+
+    <h2>Example output</h2>
+    <ul>
+      <li>Raspberry Pi, $33.53</li>
+      <li>Amazon Echo, $179.99</li>
+      <li>DJI Phantom 3, $416.59</li>
+    </ul>
+
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script>
+      // YOUR CODE HERE
+      var innerObjArr = [];
+      $.ajax({
+        url: "https://horizons-json-cors.s3.amazonaws.com/products.json",
+        success: function(products){
+          console.log('products are', products);
+          $.ajax({
+            url: products[0]['url'],
+            success: function(firstproduct) {
+              console.log(firstproduct)
+              innerObjArr.push(firstproduct)
+              $.ajax({
+                url: products[1]['url'],
+                success: function(secondproduct){
+                  console.log(secondproduct)
+                  innerObjArr.push(secondproduct)
+                  $.ajax({
+                    url: products[2]['url'],
+                    success: function(thirdproduct){
+                      console.log(thirdproduct)
+                      innerObjArr.push(thirdproduct)
+                      //console.log(innerObjArr)
+                    //  console.log(innerObjArr);
+                      var sortedArr = innerObjArr.sort(function(a,b){
+                        return a.priceCents - b.priceCents})
+                      console.log(sortedArr)
+                      $('#products').append(`<ul><li>` +sortedArr[0]['name']+ `,`+ ` $` + (sortedArr[0]['priceCents']/100)+ `</li></ul>` )
+                      $('#products').append(`<ul><li>` +sortedArr[1]['name']+ `,`+ ` $` + (sortedArr[1]['priceCents']/100)+ `</li></ul>` )
+                      $('#products').append(`<ul><li>` +sortedArr[2]['name']+ `,`+ ` $` + (sortedArr[2]['priceCents']/100)+ `</li></ul>` )
+
+
+                    }
+
+                  })
+                }
+
+              })
+            }
+
+          })
+
+
+        }
+
+      })
+
+    </script>
+  </body>
+</html>
